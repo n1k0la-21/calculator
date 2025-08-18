@@ -512,7 +512,7 @@ const PSAPSCALC = () => {
                         className={`btn ${values.diag === 29 ? "btn-accent" : "btn-warning"}`}
                         onClick={() => handleValueChange("diag", 29)}
                     >
-                        CPR / Hemorrhage / ECMO
+                        * CPR / ICH / ECMO
                     </button>
                     <button
                         className={`btn ${values.diag === 0 ? "btn-accent" : "btn-warning"}`}
@@ -528,6 +528,12 @@ const PSAPSCALC = () => {
                 <h2 className="fixed bottom-6 right-6 text-4xl font-extrabold bg-white shadow-2xl rounded-2xl px-6 py-4">
                     Score: {totalScore}
                 </h2>
+                <p className="text-m ">
+                    *
+                    ICH = Intracranial hemorrhage in combination with coma
+                    <br></br>
+                    &nbsp;&nbsp;ECMO = Needed ECMO support within the first 24 hours since admission
+                </p>
             </div>
         </div>
     );
