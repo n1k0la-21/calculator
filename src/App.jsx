@@ -186,6 +186,7 @@ const PSAPSCALC = () => {
                 ...prev,
                 [field]: value
             }));
+            setValues(prev => ({...prev, [field]: 0}));
             return;
         }
         value = Number(value);
@@ -216,6 +217,7 @@ const PSAPSCALC = () => {
 
         if (value === "") {
             setInput(prev => ({ ...prev, [field]: value }));
+            setValues(prev => ({...prev, [field]: 0}));
             return;
         }
 
@@ -461,7 +463,7 @@ const PSAPSCALC = () => {
                 <input
                     type="text"
                     value={input.temperature}
-                    onChange={(e) => checkLowerBound("temperature", e.target.value)}
+                    onChange={(e) => checkUpperBound("temperature", e.target.value)}
                     className="input input-bordered"
                 />
                 <span> ({values.temperature} points)</span>
