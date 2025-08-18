@@ -2,6 +2,7 @@
   "name": "calculator",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "homepage": "https://n1k0la-21.github.io/calculator/",
   "scripts": {
     "dev": "vite",

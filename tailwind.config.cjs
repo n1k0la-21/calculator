@@ -1,10 +1,8 @@
-import daisyui from "daisyui";
-
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
     content: ["./index.html", "./src/**/*.{js,jsx}"],
     theme: { extend: {} },
-    plugins: [daisyui],
+    plugins: [require("daisyui")],
     safelist: [
         { pattern: /btn(-primary|-secondary|-accent|-ghost)?/ },
         { pattern: /text-(primary|secondary|accent|success|warning|error)/ },
@@ -19,3 +17,4 @@ export default {
     ],
     daisyui: { themes: ["light", "dark"], styled: true },
 };
+
