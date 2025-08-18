@@ -468,7 +468,7 @@ const PSAPSCALC = () => {
             </div>
                 <br></br>
                 <div>
-                <span className="mr-2 font-bold">Primary diagnosis / reason for admission:</span>
+                <span className="mr-2 font-bold">Urinary Output: Anuria</span>
                 <div className="space-x-2">
                     <button
                         className={`btn ${values.urinaryOutput === 11 ? "btn-accent" : "btn-warning"}`}
