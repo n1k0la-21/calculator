@@ -63,9 +63,9 @@ const PSAPSCALC = () => {
         bun: 0,
         serumBicarb: 0,
         temperature: 0,
-        urinaryOutput: 0,
-        adType: 0,
-        diag: 0,
+        urinaryOutput: null,
+        adType: null,
+        diag: null,
         heartRate: 0,
         bloodPressure: 0,
     });
@@ -88,7 +88,7 @@ const PSAPSCALC = () => {
         bloodPressure: 0,
     })
 
-    const [activeField, setActiveField] = useState(""); // "spo2" or "pao2"
+    const [activeField, setActiveField] = useState(""); // "SpO_2" or "PaO_2"
 
     const [selectedAge, setSelectedAge] = useState(null);
 
@@ -99,11 +99,6 @@ const PSAPSCALC = () => {
     const handleAgeSelect = (ageId) => setSelectedAge(ageId);
 
     const totalScore = Object.values(values).reduce((acc, val) => acc + val, 0);
-
-    // to compute oxygen ratios
-    const computeRatio = (dividend, divisor) => {
-        return dividend / divisor;
-    };
 
     // range based variables check
     const checkRange = (field, value, id) => {
@@ -215,6 +210,50 @@ const PSAPSCALC = () => {
         }
     };
 
+    const checkRatio = (field, value) => {
+        // Trim spaces
+        value = value.trim();
+
+        if (value === "") {
+            setInput(prev => ({ ...prev, [field]: value }));
+            return;
+        }
+
+        // Only allow numbers (integer or decimal)
+        if (!/^\d*\.?\d*$/.test(value)) {
+            alert("Please input a valid numeric value");
+            return;
+        }
+
+        value = Number(value);
+        if (isNaN(value)) {
+            alert("Please input a valid numeric value");
+            return;
+        }
+
+        // Prevent division by zero if FiO2 is empty or zero
+        const FiO2 = Number(input.FiO_2);
+        if (!FiO2 || FiO2 === 0) {
+            setInput(prev => ({ ...prev, [field]: value }));
+            return;
+        }
+
+        const ratio = value / FiO2;
+        const bound = thresholdChecks[field];
+        if (!bound) return;
+
+        if (ratio < bound) {
+            setValues(prev => ({ ...prev, [field]: thresholdVals[field] }));
+        }
+        else{
+            setValues(prev => ({ ...prev, [field]: 0 }));
+        }
+
+        setInput(prev => ({ ...prev, [field]: value }));
+    };
+
+
+
     return (
         <div className="flex justify-center items-center min-h-screen bg-green-200">
             <div className="w-full max-w-3xl p-6 space-y-4 bg-white shadow-lg rounded-2xl">
@@ -225,8 +264,12 @@ const PSAPSCALC = () => {
                 {ageGroups.map((age) => (
                     <button
                         key={age.id}
-                        className={`btn ${selectedAge === age.id ? "btn-accent" : "btn-outline"}`}
-                        onClick={() => handleAgeSelect(age.id)}
+                        className={`btn ${selectedAge === age.id ? "btn-accent" : "btn-warning"}`}
+                        onClick={() => {handleAgeSelect(age.id);
+                        handleValueChange("heartRate", 0);
+                        handleValueChange("bloodPressure", 0);
+                        setInput(prev => ({ ...prev, heartRate: 0}));
+                        setInput(prev => ({ ...prev, bloodPressure: 0 }));}}
                     >
                         {age.label}
                     </button>
@@ -242,7 +285,6 @@ const PSAPSCALC = () => {
                             value={input.heartRate}
                             onChange={(e) => checkRange("heartRate", e.target.value, selectedAge)}
                             className="input input-bordered"
-                            placeholder={`Enter heart rate for age group ${ageGroups[selectedAge].label}`}
                         />
                         <span> ({values.heartRate} points)</span>
                     </div>
@@ -254,7 +296,6 @@ const PSAPSCALC = () => {
                             value={input.bloodPressure} // assumes values.bloodPressure in state
                             onChange={(e) => checkRange("bloodPressure", e.target.value, selectedAge)}
                             className="input input-bordered"
-                            placeholder={`Enter BP for age group ${ageGroups[selectedAge].label}`}
                         />
                         <span> ({values.bloodPressure} points)</span>
                     </div>
@@ -279,6 +320,13 @@ const PSAPSCALC = () => {
                             } else {
                                 setInput(prev => ({ ...prev, FiO_2: value }));
                             }
+
+                            if(activeField === "SpO_2"){
+                                checkRatio("SpO_2", input.SpO_2);
+                            }
+                            if(activeField === "PaO_2"){
+                                checkRatio("PaO_2", input.PaO_2);
+                            }
                         }}
                         className="input input-bordered"
                     />
@@ -290,9 +338,9 @@ const PSAPSCALC = () => {
                         SpO₂/FiO₂
                         <input
                             type="checkbox"
-                            checked={activeField === "spo2"}
+                            checked={activeField === "SpO_2"}
                             onChange={() =>
-                                setActiveField((prev) => (prev === "spo2" ? "" : "spo2"))
+                                setActiveField((prev) => (prev === "SpO_2" ? "" : "SpO_2"))
                             }
                         />
                     </label>
@@ -301,52 +349,42 @@ const PSAPSCALC = () => {
                         PaO₂/FiO₂
                         <input
                             type="checkbox"
-                            checked={activeField === "pao2"}
+                            checked={activeField === "PaO_2"}
                             onChange={() =>
-                                setActiveField((prev) => (prev === "pao2" ? "" : "pao2"))
+                                setActiveField((prev) => (prev === "PaO_2" ? "" : "PaO_2"))
                             }
                         />
                     </label>
                 </div>
 
                 {/* Conditional input fields */}
-                {activeField === "spo2" && (
+                {activeField === "SpO_2" && (
                     <div>
                         <span className="mr-2 font-medium">SpO₂:</span>
                         <input
                             type="text"
                             value={input.SpO_2}
-                            onChange={(e) => {
-                                if(e.target.value.trim() === "") {
-                                    return;
-                                }
-                                if(isNaN(Number(e.target.value))) {
-                                    alert("Please input a valid value");
-                                    return;
-                                }
-                                checkUpperBound("SpO_2", e / input.FiO_2);
-                                }
-                            }
+                            onChange={(e) => {checkRatio("SpO_2", e.target.value)}}
                             className="input input-bordered"
                         /><br></br>
-                        <span className="text-l font-bold">SpO₂/FiO₂: {isNaN(values.SpO_2/input.FiO_2) ? "-": values.SpO_2/input.FiO_2} </span>
+                        <span className="text-l font-bold">SpO₂/FiO₂: {isNaN(input.SpO_2/input.FiO_2) ? "-": input.SpO_2/input.FiO_2} </span>
                         <span> ({values.SpO_2} points)</span>
                     </div>
                 )}
 
-                {activeField === "pao2" && (
+                {activeField === "PaO_2" && (
                     <div>
                         <span className="mr-2 font-medium">PaO₂:</span>
                         <input
                             type="text"
                             value={input.PaO_2}
                             onChange={(e) => {
-                                checkUpperBound("PaO_2", e.target.value / input.FiO_2);
+                                checkRatio("PaO_2", e.target.value);
                             }
                             }
                             className="input input-bordered"
                         /><br></br>
-                        <span className="text-l font-bold">PaO₂/FiO₂: {isNaN(values.PaO_2/input.FiO_2) ? "-": values.PaO_2/input.FiO_2} </span>
+                        <span className="text-l font-bold">PaO₂/FiO₂: {isNaN(input.PaO_2/input.FiO_2) ? "-": input.PaO_2/input.FiO_2} </span>
                         <span> ({values.PaO_2} points)</span>
                     </div>
                 )}
@@ -429,22 +467,22 @@ const PSAPSCALC = () => {
                 <span> ({values.temperature} points)</span>
             </div>
                 <br></br>
-            <div>
+                <div>
                 <span className="mr-2 font-bold">Primary diagnosis / reason for admission:</span>
                 <div className="space-x-2">
                     <button
-                        className="btn btn-accent"
+                        className={`btn ${values.urinaryOutput === 11 ? "btn-accent" : "btn-warning"}`}
                         onClick={() => handleValueChange("urinaryOutput", 11)}
                     >
                         Yes
                     </button>
                     <button
-                        className="btn btn-accent"
+                        className={`btn ${values.urinaryOutput === 0 ? "btn-accent" : "btn-warning"}`}
                         onClick={() => handleValueChange("urinaryOutput", 0)}
                     >
                         No
                     </button>
-                    <span>({values.urinaryOutput} points)</span>
+                    <span>({values.urinaryOutput ?? 0} points)</span>
                 </div>
             </div>
 
@@ -452,43 +490,45 @@ const PSAPSCALC = () => {
                 <label className="font-bold">Type of admission:</label>
                 <div className="space-x-2">
                     <button
-                        className="btn btn-accent"
+                        className={`btn ${values.adType === 8 ? "btn-accent" : "btn-warning"}`}
                         onClick={() => handleValueChange("adType", 8)}
                     >
                         Unscheduled
                     </button>
                     <button
-                        className="btn btn-accent"
+                        className={`btn ${values.adType === 0 ? "btn-accent" : "btn-warning"}`}
                         onClick={() => handleValueChange("adType", 0)}
                     >
                         Scheduled
                     </button>
-                    <span>({values.adType} points)</span>
+                    <span>({values.adType ?? 0} points)</span>
                 </div>
             </div>
 
-            {/* Primary diagnosis */}
             <div>
                 <label className="font-bold">Primary diagnosis / reason for admission:</label>
                 <div className="space-x-2">
                     <button
-                        className="btn btn-accent"
+                        className={`btn ${values.diag === 29 ? "btn-accent" : "btn-warning"}`}
                         onClick={() => handleValueChange("diag", 29)}
                     >
                         CPR / Hemorrhage / ECMO
                     </button>
                     <button
-                        className="btn btn-accent"
+                        className={`btn ${values.diag === 0 ? "btn-accent" : "btn-warning"}`}
                         onClick={() => handleValueChange("diag", 0)}
                     >
                         Other
                     </button>
-                    <span>({values.diag} points)</span>
+                    <span>({values.diag ?? 0} points)</span>
                 </div>
             </div>
-            <br></br>
-            <h2 className="text-2xl font-bold">Score: {totalScore}</h2>
-        </div>
+
+                <br></br>
+                <h2 className="fixed bottom-6 right-6 text-4xl font-extrabold bg-white shadow-2xl rounded-2xl px-6 py-4">
+                    Score: {totalScore}
+                </h2>
+            </div>
         </div>
     );
 };
