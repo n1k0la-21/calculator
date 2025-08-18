@@ -5,6 +5,9 @@
   "type": "module",
   "homepage": "https://n1k0la-21.github.io/calculator",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "predeploy": "vite build",
     "deploy": "gh-pages -d dist"
   },
