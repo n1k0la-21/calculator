@@ -540,5 +540,47 @@ const PSAPSCALC = () => {
         </div>
     );
 };
+const ProtectedPSAPSCALC = () => {
+    const [inputPassword, setInputPassword] = useState("");
+    const [authenticated, setAuthenticated] = useState(false);
 
-export default PSAPSCALC;
+    const correctPassword = "";
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (inputPassword === correctPassword) {
+            setAuthenticated(true);
+        } else {
+            alert("Wrong password!");
+        }
+    };
+
+    if (!authenticated) {
+        return (
+            <div className="flex justify-center items-center min-h-screen bg-gray-100">
+                <form
+                    onSubmit={handleSubmit}
+                    className="bg-white shadow-lg p-6 rounded-2xl space-y-4"
+                >
+                    <h1 className="text-2xl font-bold text-center">Enter Password</h1>
+                    <input
+                        type="password"
+                        value={inputPassword}
+                        onChange={(e) => setInputPassword(e.target.value)}
+                        className="input input-bordered w-full"
+                        placeholder="Password"
+                    />
+                    <button
+                        type="submit"
+                        className="btn btn-accent w-full rounded-xl shadow"
+                    >
+                        Unlock
+                    </button>
+                </form>
+            </div>
+        );
+    }
+
+    return <PSAPSCALC/>;
+};
+export default ProtectedPSAPSCALC;
