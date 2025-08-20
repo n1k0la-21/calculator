@@ -260,7 +260,6 @@ const PSAPSCALC = () => {
         <div className="flex justify-center items-center min-h-screen bg-green-200">
             <div className="w-full max-w-3xl p-6 space-y-4 bg-white shadow-lg rounded-2xl">
             <h1 className="text-3xl font-bold text-center">p-SAPS III Calculator</h1><br></br>
-                <h1 className="text-2xl font-bold text-center">P-SAPS III is the updated and simplified version of p-SAPS II<sup>1</sup>.</h1><br></br>
             <h2 className="text-xl font-bold">Age dependent Variables (select to reveal)</h2>
             <div className="space-x-2">
                 <span className="mr-2 font-bold">Age:</span>
@@ -537,7 +536,8 @@ const PSAPSCALC = () => {
                     <br></br>
                     &nbsp;&nbsp;ECMO = Needed ECMO support within the first 24 hours since admission
                 </p>
-                <p className="text-s">1.        Irschik S, Veljkovic J, Golej J, Schlager G, Brandt JB, Krall C, et al. Pediatric Simplified Acute Physiology Score II: Establishment of a New, Repeatable Pediatric Mortality Risk Assessment Score. Frontiers in pediatrics. 2021;9:757-822.</p>
+                <p className="text-s">P-SAPS III is the updated and simplified version of p-SAPS II<sup>1</sup>.</p>
+                <p className="text-s">1. Irschik S, Veljkovic J, Golej J, Schlager G, Brandt JB, Krall C, et al. Pediatric Simplified Acute Physiology Score II: Establishment of a New, Repeatable Pediatric Mortality Risk Assessment Score. Frontiers in pediatrics. 2021;9:757-822.</p>
             </div>
         </div>
     );
