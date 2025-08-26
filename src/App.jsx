@@ -546,11 +546,11 @@ const ProtectedPSAPSCALC = () => {
     const [inputPassword, setInputPassword] = useState("");
     const [authenticated, setAuthenticated] = useState(false);
 
-    const correctPassword = "dAnt3-dEV1lm4yCrY";
+    const correctPassword = "ZEFudDMtZEVWMWxtNHlDclk=";
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (inputPassword === correctPassword) {
+        if (inputPassword === atob(correctPassword)) {
             setAuthenticated(true);
         } else {
             alert("Wrong password!");
