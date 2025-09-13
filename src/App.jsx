@@ -546,7 +546,7 @@ const ProtectedPSAPSCALC = () => {
     const [inputPassword, setInputPassword] = useState("");
     const [authenticated, setAuthenticated] = useState(false);
 
-    const correctPassword = "dzBQw7ZsSzEybTZww6RZNThaMm5O";
+    const correctPassword = "bVdobGQ4M2tEdTIzMW5aYVE=";
 
     const handleSubmit = (e) => {
         e.preventDefault();
