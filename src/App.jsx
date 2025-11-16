@@ -155,6 +155,7 @@ const PSAPSCALC = () => {
                 ...prev,
                 [field]: value
             }));
+            setValues(prev => ({...prev, [field]: value}));
             return;
         }
         let input = NaN;
@@ -176,6 +177,11 @@ const PSAPSCALC = () => {
             setValues(prev => ({
                 ...prev,
                 [field]: thresholdVals[field]
+            }));
+        } else{
+            setValues(prev => ({
+                ...prev,
+                [field]: 0
             }));
         }
     };
@@ -209,6 +215,11 @@ const PSAPSCALC = () => {
             setValues(prev => ({
                 ...prev,
                 [field]: thresholdVals[field]
+            }));
+        } else{
+            setValues(prev => ({
+                ...prev,
+                [field]: 0
             }));
         }
     };
