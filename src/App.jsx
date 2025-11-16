@@ -157,8 +157,9 @@ const PSAPSCALC = () => {
             }));
             return;
         }
-        value = Number(value);
-        if(isNaN(value)){
+        let input = NaN;
+        input = Number(value);
+        if(isNaN(input)){
             alert("please input a valid value");
             return;
         }
@@ -189,8 +190,9 @@ const PSAPSCALC = () => {
             setValues(prev => ({...prev, [field]: 0}));
             return;
         }
-        value = Number(value);
-        if(isNaN(value)){
+        let input = NaN;
+        input = Number(value);
+        if(isNaN(input)){
             alert("please input a valid value");
             return;
         }
